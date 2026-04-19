@@ -1,0 +1,12 @@
+:root {
+  --color-accent-green:  #00FF90;
+  --color-accent-cyan:   #00CFFF;
+  --color-warning:       #FFB800;
+  --color-danger:        #FF4444;
+  --color-bg-primary:    #080D12;
+  --color-bg-surface:    #0D1520;
+  --color-bg-elevated:   #111E2E;
+  --color-text-primary:  #C8F0E0;
+  --color-text-muted:    #4A7A60;
+  --color-border-accent: rgba(0, 255, 144, 0.20);
+}
