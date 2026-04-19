@@ -1,6 +1,6 @@
 # 🌊 Scubaaaa
 
-Browser-based mission control dashboard for a physical autonomous surface vessel — built at FullyHacks 2026.
+> Browser-based mission control dashboard for a physical autonomous surface vessel — built at FullyHacks 2026.
 
 ---
 
