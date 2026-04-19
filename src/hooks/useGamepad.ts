@@ -18,7 +18,29 @@ function getCmd(gp: Gamepad): string | null {
   return x < 0 ? 'L' : 'R'
 }
 
+<<<<<<< HEAD
 export function useGamepad(sendCmd: (cmd: string) => void, onSpeed?: (speed: number) => void) {
+=======
+const MAX_SPEED = 15
+
+function getThrottle(gp: Gamepad): number {
+  // Standard mapping (Chrome/macOS DualSense): R2 = buttons[7].value 0..1
+  if (gp.mapping === 'standard') {
+    return gp.buttons[7]?.value ?? 0
+  }
+  // Non-standard mapping: triggers often appear as axes[5] in range -1..1
+  // (-1 = released, +1 = fully pressed) — convert to 0..1
+  const axis = gp.axes[5]
+  if (axis !== undefined && axis !== 0) return Math.max(0, (axis + 1) / 2)
+  // Fallback: still try buttons[7]
+  return gp.buttons[7]?.value ?? 0
+}
+
+export function useGamepad(
+  sendCmd: (cmd: string) => void,
+  onThrottle?: (speed: number) => void,
+) {
+>>>>>>> 5afefce8e4776d0eca9b2b60eac063385105d7b8
   const lastCmd = useRef<string | null>(null)
   const rafId = useRef<number | null>(null)
 
@@ -26,17 +48,26 @@ export function useGamepad(sendCmd: (cmd: string) => void, onSpeed?: (speed: num
     function poll() {
       const gamepads = navigator.getGamepads()
       let cmd: string | null = null
+<<<<<<< HEAD
       let magnitude = 0
+=======
+      let throttle = 0
+>>>>>>> 5afefce8e4776d0eca9b2b60eac063385105d7b8
 
       for (const gp of gamepads) {
         if (!gp) continue
         cmd = getCmd(gp)
+<<<<<<< HEAD
         if (cmd) {
           const x = gp.axes[0] ?? 0
           const y = gp.axes[1] ?? 0
           magnitude = Math.min(Math.sqrt(x * x + y * y), 1)
           break
         }
+=======
+        throttle = Math.max(throttle, getThrottle(gp))
+        if (cmd) break
+>>>>>>> 5afefce8e4776d0eca9b2b60eac063385105d7b8
       }
 
       if (cmd !== lastCmd.current) {
@@ -45,7 +76,11 @@ export function useGamepad(sendCmd: (cmd: string) => void, onSpeed?: (speed: num
         lastCmd.current = cmd
       }
 
+<<<<<<< HEAD
       onSpeed?.(parseFloat((magnitude * 5).toFixed(1)))
+=======
+      onThrottle?.(parseFloat((throttle * MAX_SPEED).toFixed(1)))
+>>>>>>> 5afefce8e4776d0eca9b2b60eac063385105d7b8
 
       rafId.current = requestAnimationFrame(poll)
     }

@@ -113,17 +113,16 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed }: Props) {
         />
       ) : null}
 
-      {/* Placeholder when no stream */}
       {!STREAM_URL && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5">
-            <path d="M15 10l4.55-2.5A1 1 0 0121 8.5v7a1 1 0 01-1.45.9L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
-          </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <span className="font-mono text-sm tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
             STREAM OFFLINE
           </span>
         </div>
       )}
+
+      {/* Sonar scanlines */}
+      <div className="sonar-scanlines" />
 
       {/* Crosshair overlay */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.25 }}>
