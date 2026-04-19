@@ -1,11 +1,11 @@
 interface Props {
-  speed: number
+  speed: number | null
   heading: number
   signal: number
 }
 
 function barWidth(key: string, value: number): number {
-  if (key === 'speed') return Math.min(100, (value / 15) * 100)
+  if (key === 'speed') return Math.min(100, (value / 5) * 100)
   if (key === 'heading') return (value / 360) * 100
   if (key === 'signal') return Math.min(100, Math.max(0, (value + 100) * 2))
   return 50
@@ -45,7 +45,7 @@ function Card({ label, value, unit, colorKey, rawValue }: CardProps) {
 export function TelemetryGrid({ speed, heading, signal }: Props) {
   return (
     <div className="flex gap-3 p-3">
-      <Card label="SPEED" value={speed.toFixed(1)} unit="kn" colorKey="speed" rawValue={speed} />
+      <Card label="SPEED" value={speed !== null ? speed.toFixed(1) : '--'} unit="mph" colorKey="speed" rawValue={speed ?? 0} />
       <Card label="HEADING" value={heading.toFixed(0)} unit="°" colorKey="heading" rawValue={heading} />
       <Card label="SIGNAL" value={signal.toString()} unit="dBm" colorKey="signal" rawValue={signal} />
     </div>

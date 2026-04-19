@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 const DEADZONE = 0.25
+const MAX_SPEED = 5
 
 function getCmd(gp: Gamepad): string | null {
   // D-pad buttons (standard mapping: 12=Up 13=Down 14=Left 15=Right)
@@ -18,8 +19,6 @@ function getCmd(gp: Gamepad): string | null {
   return x < 0 ? 'L' : 'R'
 }
 
-const MAX_SPEED = 15
-
 function getThrottle(gp: Gamepad): number {
   // Standard mapping (Chrome/macOS DualSense): R2 = buttons[7].value 0..1
   if (gp.mapping === 'standard') {
@@ -29,14 +28,10 @@ function getThrottle(gp: Gamepad): number {
   // (-1 = released, +1 = fully pressed) — convert to 0..1
   const axis = gp.axes[5]
   if (axis !== undefined && axis !== 0) return Math.max(0, (axis + 1) / 2)
-  // Fallback: still try buttons[7]
   return gp.buttons[7]?.value ?? 0
 }
 
-export function useGamepad(
-  sendCmd: (cmd: string) => void,
-  onThrottle?: (speed: number) => void,
-) {
+export function useGamepad(sendCmd: (cmd: string) => void, onSpeed?: (speed: number) => void) {
   const lastCmd = useRef<string | null>(null)
   const rafId = useRef<number | null>(null)
 
@@ -59,7 +54,7 @@ export function useGamepad(
         lastCmd.current = cmd
       }
 
-      onThrottle?.(parseFloat((throttle * MAX_SPEED).toFixed(1)))
+      onSpeed?.(parseFloat((throttle * MAX_SPEED).toFixed(1)))
 
       rafId.current = requestAnimationFrame(poll)
     }
@@ -77,7 +72,6 @@ export function useGamepad(
     window.addEventListener('gamepadconnected', onConnect)
     window.addEventListener('gamepaddisconnected', onDisconnect)
 
-    // Start polling if a gamepad is already connected
     if (navigator.getGamepads().some(g => !!g)) {
       rafId.current = requestAnimationFrame(poll)
     }
@@ -87,5 +81,5 @@ export function useGamepad(
       window.removeEventListener('gamepaddisconnected', onDisconnect)
       if (rafId.current !== null) cancelAnimationFrame(rafId.current)
     }
-  }, [sendCmd])
+  }, [sendCmd, onSpeed])
 }

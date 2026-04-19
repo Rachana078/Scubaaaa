@@ -33,7 +33,7 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
     setDetectionLog(prev => [...prev.slice(-19), entry])
   }, [])
 
-  const speed = gamepadSpeed ?? telemetry.speed
+  const speed: number | null = streamOnline ? (gamepadSpeed ?? telemetry.speed) : null
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>

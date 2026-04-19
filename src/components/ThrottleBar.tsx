@@ -1,10 +1,10 @@
 interface Props {
-  speed: number
+  speed: number | null
   maxSpeed?: number
 }
 
-export function ThrottleBar({ speed, maxSpeed = 15 }: Props) {
-  const pct = Math.min(1, speed / maxSpeed)
+export function ThrottleBar({ speed, maxSpeed = 5 }: Props) {
+  const pct = speed !== null ? Math.min(1, speed / maxSpeed) : 0
   const segments = 20
   const filled = Math.round(pct * segments)
 
