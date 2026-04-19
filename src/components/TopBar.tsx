@@ -8,7 +8,13 @@ export function TopBar({ connected }: Props) {
   const [utc, setUtc] = useState('')
 
   useEffect(() => {
-    const tick = () => setUtc(new Date().toUTCString().slice(0, 25) + ' UTC')
+    const tick = () => setUtc(
+      new Date().toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles',
+        weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+      }) + ' PST'
+    )
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
