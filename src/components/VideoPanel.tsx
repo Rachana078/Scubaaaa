@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 
 const STREAM_URL = import.meta.env.VITE_STREAM_URL as string | undefined
 
-export function VideoPanel() {
+interface Props {
+  onStatusChange?: (online: boolean) => void
+}
+
+export function VideoPanel({ onStatusChange }: Props) {
   const [streaming, setStreaming] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const startRef = useRef<number | null>(null)
@@ -37,6 +41,11 @@ export function VideoPanel() {
               setStreaming(true)
               startRef.current = Date.now()
             }
+            onStatusChange?.(true)
+          }}
+          onError={() => {
+            setStreaming(false)
+            onStatusChange?.(false)
           }}
         />
       ) : null}

@@ -48,7 +48,7 @@ export function TopBar({ connected, username, onLogout }: Props) {
           </span>
           <span className="font-mono text-xs tracking-widest"
             style={{ color: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}>
-            {connected ? 'CONNECTED' : 'OFFLINE'}
+            {connected ? 'CONNECTED' : 'DISCONNECTED'}
           </span>
         </div>
 
