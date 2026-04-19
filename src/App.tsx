@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useSocket } from './hooks/useSocket'
+import type { LogEntry } from './hooks/useSocket'
+import type { Detection } from './hooks/useDetection'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useGamepad } from './hooks/useGamepad'
 import { TopBar } from './components/TopBar'
 import { VideoPanel } from './components/VideoPanel'
-import { CompassCard } from './components/CompassCard'
 import { DPad } from './components/DPad'
 import { TelemetryGrid } from './components/TelemetryGrid'
 import { ThrottleBar } from './components/ThrottleBar'
@@ -15,8 +16,22 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
   const [streamOnline, setStreamOnline] = useState(false)
   const { sendCmd, telemetry, log } = useSocket()
   const [gamepadSpeed, setGamepadSpeed] = useState<number | null>(null)
+  const [detectionLog, setDetectionLog] = useState<LogEntry[]>([])
+  const prevCountRef = useRef(0)
   useKeyboard(sendCmd)
   useGamepad(sendCmd, setGamepadSpeed)
+
+  const handleDetection = useCallback((detections: Detection[]) => {
+    const count = detections.length
+    if (count === prevCountRef.current) return
+    prevCountRef.current = count
+    if (count === 0) return
+    const now = new Date()
+    const ts  = now.toUTCString().slice(17, 25)
+    const classes = [...new Set(detections.map(d => d.class.toUpperCase()))].join(', ')
+    const entry: LogEntry = { ts, cmd: `${count}`, direction: classes }
+    setDetectionLog(prev => [...prev.slice(-19), entry])
+  }, [])
 
   const speed = gamepadSpeed ?? telemetry.speed
 
@@ -60,7 +75,7 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
       <div className="flex flex-1 overflow-hidden">
         {/* Left: video */}
         <div className="flex flex-col flex-1 p-3 overflow-hidden">
-          <VideoPanel onStatusChange={setStreamOnline} />
+          <VideoPanel onStatusChange={setStreamOnline} onDetection={handleDetection} />
         </div>
 
         {/* Right: compass + dpad + direction */}
@@ -71,8 +86,29 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
             borderLeft: '1px solid var(--color-border-accent)',
             background: 'var(--color-bg-surface)',
           }}>
-          <CompassCard heading={telemetry.heading} />
-          <div style={{ borderTop: '1px solid var(--color-border-accent)' }}>
+          {/* Detection log */}
+          <div className="flex flex-col p-3 gap-2" style={{ borderBottom: '1px solid var(--color-border-accent)' }}>
+            <div className="text-xs font-mono tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+              DETECTION LOG
+            </div>
+            <div className="font-mono text-xs tracking-widest mb-1" style={{ color: 'var(--color-accent-cyan)' }}>
+              TARGETS: {detectionLog.length > 0 ? detectionLog[detectionLog.length - 1].cmd : '0'}
+            </div>
+            <div className="overflow-y-auto font-mono text-xs space-y-1" style={{ height: '140px' }}>
+              {detectionLog.length === 0 && (
+                <div style={{ color: 'var(--color-text-muted)' }}>— awaiting detections —</div>
+              )}
+              {detectionLog.map((e, i) => (
+                <div key={i}>
+                  <span style={{ color: 'var(--color-text-muted)' }}>[{e.ts}] </span>
+                  <span style={{ color: 'var(--color-accent-cyan)' }}>{e.cmd} TARGET{parseInt(e.cmd) !== 1 ? 'S' : ''}</span>
+                  <br />
+                  <span style={{ color: 'var(--color-text-primary)', paddingLeft: '8px' }}>{e.direction}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
             <DPad sendCmd={sendCmd} direction={telemetry.direction} />
           </div>
           {/* Last CMD display */}
