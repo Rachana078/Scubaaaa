@@ -1,41 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import Hls from 'hls.js'
 
-const HLS_URL = import.meta.env.VITE_HLS_URL as string | undefined
+const STREAM_URL = import.meta.env.VITE_STREAM_URL as string | undefined
 
 export function VideoPanel() {
-  const videoRef = useRef<HTMLVideoElement>(null)
   const [streaming, setStreaming] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const startRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    if (!HLS_URL || !videoRef.current) return
-
-    const video = videoRef.current
-
-    if (Hls.isSupported()) {
-      const hls = new Hls()
-      hls.loadSource(HLS_URL)
-      hls.attachMedia(video)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {})
-        setStreaming(true)
-        startRef.current = Date.now()
-      })
-      hls.on(Hls.Events.ERROR, (_e, data) => {
-        if (data.fatal) setStreaming(false)
-      })
-      return () => hls.destroy()
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = HLS_URL
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch(() => {})
-        setStreaming(true)
-        startRef.current = Date.now()
-      })
-    }
-  }, [])
 
   useEffect(() => {
     if (!streaming) return
@@ -58,17 +28,21 @@ export function VideoPanel() {
         borderRight: '1px solid var(--color-border-accent)',
         borderBottom: '1px solid var(--color-border-accent)', minHeight: '240px' }}>
 
-      {HLS_URL ? (
-        <video
-          ref={videoRef}
+      {STREAM_URL ? (
+        <img
+          src={STREAM_URL}
           className="w-full h-full object-cover"
-          muted
-          playsInline
+          onLoad={() => {
+            if (!streaming) {
+              setStreaming(true)
+              startRef.current = Date.now()
+            }
+          }}
         />
       ) : null}
 
       {/* Placeholder when no stream */}
-      {!HLS_URL && (
+      {!STREAM_URL && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5">
             <path d="M15 10l4.55-2.5A1 1 0 0121 8.5v7a1 1 0 01-1.45.9L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />

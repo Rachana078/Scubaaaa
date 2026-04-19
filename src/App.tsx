@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSocket } from './hooks/useSocket'
 import { useKeyboard } from './hooks/useKeyboard'
+import { useGamepad } from './hooks/useGamepad'
 import { TopBar } from './components/TopBar'
 import { VideoPanel } from './components/VideoPanel'
 import { CompassCard } from './components/CompassCard'
@@ -13,6 +14,7 @@ import { Login } from './components/Login'
 function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
   const { sendCmd, telemetry, connected, log } = useSocket()
   useKeyboard(sendCmd)
+  useGamepad(sendCmd)
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
