@@ -26,8 +26,10 @@ const DIRECTIONS: Record<string, string> = {
   S: 'stopped',
 }
 
+const WS_URL = 'ws://192.168.2.1:8000/ws'
+
 export function useSocket() {
-  const [connected, setConnected] = useState(true)
+  const [connected, setConnected] = useState(false)
   const [telemetry, setTelemetry] = useState<Telemetry>({
     speed: 0,
     heading: 0,
@@ -36,34 +38,50 @@ export function useSocket() {
   })
   const [log, setLog] = useState<LogEntry[]>([])
   const directionRef = useRef('stopped')
+  const wsRef = useRef<WebSocket | null>(null)
 
-  // ── MOCK MODE ──────────────────────────────────────────────────────────────
-  // To switch to real socket.io, comment out the block below and uncomment
-  // the real socket block further down.
-
+  // ── REAL WEBSOCKET ─────────────────────────────────────────────────────────
   useEffect(() => {
-    setConnected(true)
+    function connect() {
+      const ws = new WebSocket(WS_URL)
+      wsRef.current = ws
+
+      ws.onopen = () => setConnected(true)
+      ws.onclose = () => {
+        setConnected(false)
+        // Reconnect after 2s
+        setTimeout(connect, 2000)
+      }
+      ws.onerror = () => ws.close()
+
+      // If the ROV sends telemetry back, handle it here
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data)
+          if (data.heading !== undefined || data.speed !== undefined) {
+            setTelemetry(prev => ({ ...prev, ...data }))
+          }
+        } catch { /* ignore non-JSON */ }
+      }
+    }
+
+    connect()
+    return () => {
+      wsRef.current?.close()
+    }
+  }, [])
+
+  // ── MOCK telemetry (heading + signal only — remove when ROV sends real data)
+  useEffect(() => {
     const id = setInterval(() => {
       setTelemetry(prev => ({
-        speed: parseFloat((Math.random() * 12).toFixed(1)),
+        ...prev,
         heading: parseFloat(((prev.heading + (Math.random() * 6 - 3) + 360) % 360).toFixed(1)),
         signal: Math.round(-40 - Math.random() * 60),
-        direction: directionRef.current,
       }))
     }, 800)
     return () => clearInterval(id)
   }, [])
-
-  // ── REAL SOCKET (swap in at hackathon) ────────────────────────────────────
-  // import { io } from 'socket.io-client'
-  // useEffect(() => {
-  //   const socket = io('http://your-vessel-ip:3001')
-  //   socket.on('connect', () => setConnected(true))
-  //   socket.on('disconnect', () => setConnected(false))
-  //   socket.on('telemetry', (data: Telemetry) => setTelemetry(data))
-  //   return () => { socket.disconnect() }
-  // }, [])
-  // ─────────────────────────────────────────────────────────────────────────
 
   const sendCmd = useCallback((cmd: string) => {
     const direction = DIRECTIONS[cmd] ?? cmd
@@ -71,6 +89,10 @@ export function useSocket() {
     setTelemetry(prev => ({ ...prev, direction }))
     const entry: LogEntry = { ts: nowUTC(), cmd, direction }
     setLog(prev => [...prev.slice(-19), entry])
+
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ cmd }))
+    }
   }, [])
 
   return { sendCmd, telemetry, connected, log }
