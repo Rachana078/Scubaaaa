@@ -45,6 +45,24 @@ export function EventLog({ entries }: Props) {
           </svg>
         </div>
 
+        {/* Yellow fish 3 */}
+        <div className="fish-3 absolute pointer-events-none" style={{ top: '12%', zIndex: 1 }}>
+          <svg width="20" height="10" viewBox="0 0 24 12" fill="none">
+            <ellipse cx="14" cy="6" rx="9" ry="4.5" fill="rgba(255,220,80,0.55)" />
+            <polygon points="0,0 0,12 7,6" fill="rgba(255,200,50,0.5)" />
+            <circle cx="19" cy="4.5" r="1.1" fill="rgba(255,240,150,0.95)" />
+          </svg>
+        </div>
+
+        {/* Yellow fish 4 */}
+        <div className="fish-4 absolute pointer-events-none" style={{ top: '68%', zIndex: 1 }}>
+          <svg width="16" height="8" viewBox="0 0 18 9" fill="none">
+            <ellipse cx="11" cy="4.5" rx="7" ry="3.5" fill="rgba(255,210,60,0.5)" />
+            <polygon points="0,0 0,9 5,4.5" fill="rgba(255,195,40,0.45)" />
+            <circle cx="15" cy="3.2" r="0.9" fill="rgba(255,240,150,0.95)" />
+          </svg>
+        </div>
+
         {/* Fish 2 — swims at ~65% height */}
         <div className="fish-2 absolute pointer-events-none" style={{ top: '58%', zIndex: 1 }}>
           <svg width="16" height="9" viewBox="0 0 16 9" fill="none">
@@ -56,7 +74,7 @@ export function EventLog({ entries }: Props) {
 
         {/* Submarine — swims through at ~42% height */}
         <div className="sub-swim absolute pointer-events-none" style={{ top: '30%', zIndex: 1 }}>
-          <svg width="90" height="32" viewBox="0 0 90 32" fill="none" opacity="0.35">
+          <svg width="90" height="32" viewBox="0 0 90 32" fill="none" opacity="0.35" style={{ transform: 'scaleX(-1)' }}>
             <ellipse cx="43" cy="22" rx="38" ry="9" fill="#00E5FF" />
             <rect x="30" y="11" width="18" height="12" rx="3" fill="#00E5FF" />
             <rect x="44" y="5" width="2" height="8" rx="1" fill="#00E5FF" />

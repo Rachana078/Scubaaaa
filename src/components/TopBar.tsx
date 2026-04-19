@@ -27,7 +27,7 @@ export function TopBar({ connected, username, onLogout }: Props) {
       style={{ borderColor: 'var(--color-border-accent)', background: 'var(--color-bg-surface)' }}>
       {/* Left: Logo */}
       <div className="font-mono text-lg tracking-widest" style={{ color: 'var(--color-accent-green)' }}>
-        DEEPRUN
+        SCUBAAAA
       </div>
 
       {/* Center: UTC clock */}
