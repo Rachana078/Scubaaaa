@@ -12,18 +12,47 @@ import { EventLog } from './components/EventLog'
 import { Login } from './components/Login'
 
 function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
-<<<<<<< Updated upstream
-  const { sendCmd, telemetry, connected, log } = useSocket()
-=======
   const [streamOnline, setStreamOnline] = useState(false)
   const { sendCmd, telemetry, log } = useSocket()
   const [gamepadSpeed, setGamepadSpeed] = useState<number | null>(null)
->>>>>>> Stashed changes
   useKeyboard(sendCmd)
-  useGamepad(sendCmd)
+  useGamepad(sendCmd, setGamepadSpeed)
+
+  const speed = gamepadSpeed ?? telemetry.speed
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
+      {/* Ocean bubble background */}
+      <div className="ocean-bubbles" aria-hidden="true">
+        <span className="bubble" /><span className="bubble" /><span className="bubble" />
+        <span className="bubble" /><span className="bubble" /><span className="bubble" />
+        <span className="bubble" /><span className="bubble" />
+      </div>
+
+      {/* Submarine background layer */}
+      <div className="fixed pointer-events-none" style={{ top: '38%', zIndex: 0 }} aria-hidden="true">
+        <div className="submarine">
+          <svg width="220" height="80" viewBox="0 0 220 80" fill="none" opacity="0.12">
+            {/* Hull */}
+            <ellipse cx="105" cy="52" rx="95" ry="22" fill="#00E5FF" />
+            {/* Conning tower */}
+            <rect x="85" y="28" width="40" height="26" rx="6" fill="#00E5FF" />
+            {/* Periscope */}
+            <rect x="118" y="14" width="3" height="16" rx="1.5" fill="#00E5FF" />
+            <rect x="112" y="14" width="12" height="3" rx="1.5" fill="#00E5FF" />
+            {/* Portholes */}
+            <circle cx="70" cy="52" r="7" fill="#020B18" stroke="#00E5FF" strokeWidth="2" />
+            <circle cx="120" cy="52" r="7" fill="#020B18" stroke="#00E5FF" strokeWidth="2" />
+            {/* Propeller */}
+            <circle cx="200" cy="52" r="6" fill="none" stroke="#00E5FF" strokeWidth="2" />
+            <line x1="200" y1="46" x2="200" y2="58" stroke="#00E5FF" strokeWidth="2" />
+            <line x1="194" y1="52" x2="206" y2="52" stroke="#00E5FF" strokeWidth="2" />
+            {/* Tail fin */}
+            <path d="M195 40 L210 30 L210 42 Z" fill="#00E5FF" />
+            <path d="M195 64 L210 74 L210 62 Z" fill="#00E5FF" />
+          </svg>
+        </div>
+      </div>
       {/* Top bar */}
       <TopBar connected={streamOnline} username={username} onLogout={onLogout} />
 
@@ -64,11 +93,11 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
       {/* Bottom: telemetry + throttle + log */}
       <div style={{ borderTop: '1px solid var(--color-border-accent)', background: 'var(--color-bg-surface)' }}>
         <TelemetryGrid
-          speed={telemetry.speed}
+          speed={speed}
           heading={telemetry.heading}
           signal={telemetry.signal}
         />
-        <ThrottleBar speed={telemetry.speed} />
+        <ThrottleBar speed={speed} />
         <EventLog entries={log} />
       </div>
     </div>

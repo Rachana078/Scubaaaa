@@ -50,17 +50,36 @@ export function VideoPanel({ onStatusChange }: Props) {
         />
       ) : null}
 
-      {/* Placeholder when no stream */}
+      {/* Placeholder when no stream — jellyfish */}
       {!STREAM_URL && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5">
-            <path d="M15 10l4.55-2.5A1 1 0 0121 8.5v7a1 1 0 01-1.45.9L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
-          </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+          <div className="jelly-wrap">
+            <svg width="72" height="90" viewBox="0 0 72 90" fill="none">
+              {/* Bell */}
+              <ellipse className="jelly-bell" cx="36" cy="32" rx="28" ry="22"
+                fill="rgba(0,229,255,0.07)" stroke="rgba(0,229,255,0.35)" strokeWidth="1.2" />
+              {/* Inner shimmer */}
+              <ellipse cx="36" cy="35" rx="16" ry="10"
+                fill="rgba(0,229,255,0.04)" stroke="rgba(0,229,255,0.12)" strokeWidth="0.8" />
+              {/* Tentacles */}
+              <path className="tentacle" d="M18 52 Q14 62 18 72 Q22 82 18 90"
+                stroke="rgba(0,229,255,0.3)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+              <path className="tentacle" d="M28 56 Q24 66 28 76 Q32 86 28 90"
+                stroke="rgba(0,229,255,0.25)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path className="tentacle" d="M44 56 Q48 66 44 76 Q40 86 44 90"
+                stroke="rgba(0,229,255,0.25)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path className="tentacle" d="M54 52 Q58 62 54 72 Q50 82 54 90"
+                stroke="rgba(0,229,255,0.3)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+            </svg>
+          </div>
           <span className="font-mono text-sm tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
             STREAM OFFLINE
           </span>
         </div>
       )}
+
+      {/* Sonar scanlines */}
+      <div className="sonar-scanlines" />
 
       {/* Crosshair overlay */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.25 }}>

@@ -18,7 +18,25 @@ function getCmd(gp: Gamepad): string | null {
   return x < 0 ? 'L' : 'R'
 }
 
-export function useGamepad(sendCmd: (cmd: string) => void) {
+const MAX_SPEED = 15
+
+function getThrottle(gp: Gamepad): number {
+  // Standard mapping (Chrome/macOS DualSense): R2 = buttons[7].value 0..1
+  if (gp.mapping === 'standard') {
+    return gp.buttons[7]?.value ?? 0
+  }
+  // Non-standard mapping: triggers often appear as axes[5] in range -1..1
+  // (-1 = released, +1 = fully pressed) — convert to 0..1
+  const axis = gp.axes[5]
+  if (axis !== undefined && axis !== 0) return Math.max(0, (axis + 1) / 2)
+  // Fallback: still try buttons[7]
+  return gp.buttons[7]?.value ?? 0
+}
+
+export function useGamepad(
+  sendCmd: (cmd: string) => void,
+  onThrottle?: (speed: number) => void,
+) {
   const lastCmd = useRef<string | null>(null)
   const rafId = useRef<number | null>(null)
 
@@ -26,10 +44,12 @@ export function useGamepad(sendCmd: (cmd: string) => void) {
     function poll() {
       const gamepads = navigator.getGamepads()
       let cmd: string | null = null
+      let throttle = 0
 
       for (const gp of gamepads) {
         if (!gp) continue
         cmd = getCmd(gp)
+        throttle = Math.max(throttle, getThrottle(gp))
         if (cmd) break
       }
 
@@ -38,6 +58,8 @@ export function useGamepad(sendCmd: (cmd: string) => void) {
         else sendCmd('S')
         lastCmd.current = cmd
       }
+
+      onThrottle?.(parseFloat((throttle * MAX_SPEED).toFixed(1)))
 
       rafId.current = requestAnimationFrame(poll)
     }

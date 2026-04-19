@@ -1,12 +1,12 @@
 :root {
-  --color-accent-green:  #00FF90;
-  --color-accent-cyan:   #00CFFF;
+  --color-accent-green:  #00E5FF;
+  --color-accent-cyan:   #00FFD1;
   --color-warning:       #FFB800;
   --color-danger:        #FF4444;
-  --color-bg-primary:    #080D12;
-  --color-bg-surface:    #0D1520;
-  --color-bg-elevated:   #111E2E;
-  --color-text-primary:  #C8F0E0;
-  --color-text-muted:    #4A7A60;
-  --color-border-accent: rgba(0, 255, 144, 0.20);
+  --color-bg-primary:    #020B18;
+  --color-bg-surface:    #051628;
+  --color-bg-elevated:   #0A2240;
+  --color-text-primary:  #A8D8F0;
+  --color-text-muted:    #1E5878;
+  --color-border-accent: rgba(0, 229, 255, 0.15);
 }

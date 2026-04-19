@@ -108,7 +108,7 @@ export function Login({ onLogin }: LoginProps) {
               '--tw-ring-color': 'var(--color-accent-cyan)'
             } as CSSProperties}
           >
-            {isLoading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
+            {isLoading ? 'LOGGING IN...' : 'LOGIN'}
           </button>
         </form>
       </div>
