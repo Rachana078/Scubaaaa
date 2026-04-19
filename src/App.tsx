@@ -12,20 +12,26 @@ import { EventLog } from './components/EventLog'
 import { Login } from './components/Login'
 
 function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
+<<<<<<< Updated upstream
   const { sendCmd, telemetry, connected, log } = useSocket()
+=======
+  const [streamOnline, setStreamOnline] = useState(false)
+  const { sendCmd, telemetry, log } = useSocket()
+  const [gamepadSpeed, setGamepadSpeed] = useState<number | null>(null)
+>>>>>>> Stashed changes
   useKeyboard(sendCmd)
   useGamepad(sendCmd)
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
       {/* Top bar */}
-      <TopBar connected={connected} username={username} onLogout={onLogout} />
+      <TopBar connected={streamOnline} username={username} onLogout={onLogout} />
 
       {/* Main content: video + right panel */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left: video */}
         <div className="flex flex-col flex-1 p-3 overflow-hidden">
-          <VideoPanel />
+          <VideoPanel onStatusChange={setStreamOnline} />
         </div>
 
         {/* Right: compass + dpad + direction */}

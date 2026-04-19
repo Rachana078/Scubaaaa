@@ -111,13 +111,6 @@ export function Login({ onLogin }: LoginProps) {
             {isLoading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
           </button>
         </form>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <div className="font-mono text-xs tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
-            SECURE ACCESS REQUIRED
-          </div>
-        </div>
       </div>
     </div>
   )
