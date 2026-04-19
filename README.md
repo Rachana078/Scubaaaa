@@ -6,7 +6,7 @@ Browser-based mission control dashboard for a physical autonomous surface vessel
 
 ## What is it?
 
-Scubaaaa is a real-time web dashboard that lets you pilot a physical surface vessel from any browser. Live camera feed, telemetry readouts, and directional controls — all over WebSocket, installable as a PWA on any phone or tablet.
+Scubaaaa is a real-time web dashboard that lets you pilot a physical surface vessel from any browser. Live camera feed, telemetry readouts(MOCK DATA RN), and directional controls — all over WebSocket, installable as a PWA on any phone or tablet.
 
 Built in ~24 hours at FullyHacks 2026 @ CSUF with an ocean theme because of course.
 
@@ -15,7 +15,6 @@ Built in ~24 hours at FullyHacks 2026 @ CSUF with an ocean theme because of cour
 ## Features
 
 - 🎥 **Live camera feed** via HLS stream (hls.js)
-- 📡 **Real-time telemetry** — speed, heading, battery, signal strength
 - 🕹️ **Directional controls** — WASD keyboard + D-pad (touch-friendly)
 - 🧭 **Animated compass** with live heading
 - 🌊 **Ocean theme** — bioluminescent UI, floating bubbles, seaweed, fish
