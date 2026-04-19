@@ -12,15 +12,13 @@ import { EventLog } from './components/EventLog'
 import { Login } from './components/Login'
 
 function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
-<<<<<<< Updated upstream
-  const { sendCmd, telemetry, connected, log } = useSocket()
-=======
   const [streamOnline, setStreamOnline] = useState(false)
   const { sendCmd, telemetry, log } = useSocket()
   const [gamepadSpeed, setGamepadSpeed] = useState<number | null>(null)
->>>>>>> Stashed changes
   useKeyboard(sendCmd)
-  useGamepad(sendCmd)
+  useGamepad(sendCmd, setGamepadSpeed)
+
+  const speed: number | null = streamOnline ? (gamepadSpeed ?? telemetry.speed) : null
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
@@ -64,11 +62,11 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
       {/* Bottom: telemetry + throttle + log */}
       <div style={{ borderTop: '1px solid var(--color-border-accent)', background: 'var(--color-bg-surface)' }}>
         <TelemetryGrid
-          speed={telemetry.speed}
+          speed={speed}
           heading={telemetry.heading}
           signal={telemetry.signal}
         />
-        <ThrottleBar speed={telemetry.speed} />
+        <ThrottleBar speed={speed} />
         <EventLog entries={log} />
       </div>
     </div>

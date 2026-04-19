@@ -18,7 +18,7 @@ function getCmd(gp: Gamepad): string | null {
   return x < 0 ? 'L' : 'R'
 }
 
-export function useGamepad(sendCmd: (cmd: string) => void) {
+export function useGamepad(sendCmd: (cmd: string) => void, onSpeed?: (speed: number) => void) {
   const lastCmd = useRef<string | null>(null)
   const rafId = useRef<number | null>(null)
 
@@ -26,11 +26,17 @@ export function useGamepad(sendCmd: (cmd: string) => void) {
     function poll() {
       const gamepads = navigator.getGamepads()
       let cmd: string | null = null
+      let magnitude = 0
 
       for (const gp of gamepads) {
         if (!gp) continue
         cmd = getCmd(gp)
-        if (cmd) break
+        if (cmd) {
+          const x = gp.axes[0] ?? 0
+          const y = gp.axes[1] ?? 0
+          magnitude = Math.min(Math.sqrt(x * x + y * y), 1)
+          break
+        }
       }
 
       if (cmd !== lastCmd.current) {
@@ -38,6 +44,8 @@ export function useGamepad(sendCmd: (cmd: string) => void) {
         else sendCmd('S')
         lastCmd.current = cmd
       }
+
+      onSpeed?.(parseFloat((magnitude * 5).toFixed(1)))
 
       rafId.current = requestAnimationFrame(poll)
     }
@@ -65,5 +73,5 @@ export function useGamepad(sendCmd: (cmd: string) => void) {
       window.removeEventListener('gamepaddisconnected', onDisconnect)
       if (rafId.current !== null) cancelAnimationFrame(rafId.current)
     }
-  }, [sendCmd])
+  }, [sendCmd, onSpeed])
 }
