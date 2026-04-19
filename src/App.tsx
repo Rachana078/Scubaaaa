@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSocket } from './hooks/useSocket'
 import { useKeyboard } from './hooks/useKeyboard'
 import { TopBar } from './components/TopBar'
@@ -7,15 +8,16 @@ import { DPad } from './components/DPad'
 import { TelemetryGrid } from './components/TelemetryGrid'
 import { ThrottleBar } from './components/ThrottleBar'
 import { EventLog } from './components/EventLog'
+import { Login } from './components/Login'
 
-export default function App() {
+function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
   const { sendCmd, telemetry, connected, log } = useSocket()
   useKeyboard(sendCmd)
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
       {/* Top bar */}
-      <TopBar connected={connected} />
+      <TopBar connected={connected} username={username} onLogout={onLogout} />
 
       {/* Main content: video + right panel */}
       <div className="flex flex-1 overflow-hidden">
@@ -63,4 +65,45 @@ export default function App() {
       </div>
     </div>
   )
+}
+
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const storedAuth = localStorage.getItem('scubaaaa-auth')
+    if (storedAuth) {
+      const { timestamp } = JSON.parse(storedAuth)
+      // Check if login is still valid (24 hours)
+      return Date.now() - timestamp < 24 * 60 * 60 * 1000
+    }
+    return false
+  })
+  const [username, setUsername] = useState(() => {
+    const storedAuth = localStorage.getItem('scubaaaa-auth')
+    if (storedAuth) {
+      const { username: storedUsername, timestamp } = JSON.parse(storedAuth)
+      return Date.now() - timestamp < 24 * 60 * 60 * 1000 ? storedUsername : ''
+    }
+    return ''
+  })
+
+  const handleLogin = (user: string) => {
+    setIsAuthenticated(true)
+    setUsername(user)
+    localStorage.setItem('scubaaaa-auth', JSON.stringify({
+      username: user,
+      timestamp: Date.now(),
+    }))
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    setUsername('')
+    localStorage.removeItem('scubaaaa-auth')
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />
+  }
+
+  return <MainApp username={username} onLogout={handleLogout} />
 }

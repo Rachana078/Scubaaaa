@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 
 interface Props {
   connected: boolean
+  username?: string
+  onLogout?: () => void
 }
 
-export function TopBar({ connected }: Props) {
+export function TopBar({ connected, username, onLogout }: Props) {
   const [utc, setUtc] = useState('')
 
   useEffect(() => {
@@ -28,15 +30,35 @@ export function TopBar({ connected }: Props) {
       </div>
 
       {/* Right: WS status */}
-      <div className="flex items-center gap-2">
-        <span
-          className="w-2 h-2 rounded-full animate-pulse-dot"
-          style={{ backgroundColor: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}
-        />
-        <span className="font-mono text-xs tracking-widest"
-          style={{ color: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}>
-          {connected ? 'CONNECTED' : 'OFFLINE'}
-        </span>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span
+            className="w-2 h-2 rounded-full animate-pulse-dot"
+            style={{ backgroundColor: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}
+          />
+          <span className="font-mono text-xs tracking-widest"
+            style={{ color: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}>
+            {connected ? 'CONNECTED' : 'OFFLINE'}
+          </span>
+        </div>
+
+        {username && onLogout && (
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+              {username}
+            </span>
+            <button
+              onClick={onLogout}
+              className="text-xs font-mono uppercase tracking-widest px-3 py-1 rounded border"
+              style={{
+                borderColor: 'var(--color-border-accent)',
+                color: 'var(--color-text-primary)',
+                background: 'transparent'
+              }}>
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
