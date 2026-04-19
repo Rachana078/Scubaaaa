@@ -17,7 +17,7 @@ export interface Detection {
   height: number
 }
 
-const ENDPOINT = `https://detect.roboflow.com/${MODEL}/${VERSION}?api_key=${API_KEY}`
+const ENDPOINT = `https://detect.roboflow.com/${MODEL}/${VERSION}?api_key=${API_KEY}&confidence=25&overlap=30`
 
 export function useDetection(
   sourceRef: React.RefObject<HTMLImageElement | HTMLVideoElement | null>,

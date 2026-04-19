@@ -24,7 +24,13 @@ const DIRECTIONS: Record<string, string> = {
   L: 'port',
   R: 'starboard',
   S: 'stopped',
+  X: 'servo left',
+  Z: 'servo right',
+  C: 'servo center',
 }
+
+// Commands that don't use speed
+const NO_SPEED = new Set(['S', 'X', 'Z', 'C'])
 
 const WS_URL = 'ws://192.168.2.1:8000/ws'
 
@@ -83,7 +89,7 @@ export function useSocket() {
     return () => clearInterval(id)
   }, [])
 
-  const sendCmd = useCallback((cmd: string) => {
+  const sendCmd = useCallback((cmd: string, speed?: number) => {
     const direction = DIRECTIONS[cmd] ?? cmd
     directionRef.current = direction
     setTelemetry(prev => ({ ...prev, direction }))
@@ -91,7 +97,9 @@ export function useSocket() {
     setLog(prev => [...prev.slice(-19), entry])
 
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ cmd }))
+      const payload: Record<string, unknown> = { cmd }
+      if (!NO_SPEED.has(cmd) && speed !== undefined) payload.speed = speed
+      wsRef.current.send(JSON.stringify(payload))
     }
   }, [])
 

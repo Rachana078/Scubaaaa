@@ -109,27 +109,33 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
     onDetection?.(detections)
     const canvas = canvasRef.current
     if (!canvas) return
+
+    // Match canvas internal resolution to its displayed size so coords align
+    const { width: cw, height: ch } = canvas.getBoundingClientRect()
+    canvas.width  = cw
+    canvas.height = ch
+
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, cw, ch)
 
     detections.forEach(d => {
-      const x = (d.x - d.width  / 2) * canvas.width
-      const y = (d.y - d.height / 2) * canvas.height
-      const w = d.width  * canvas.width
-      const h = d.height * canvas.height
+      const x = (d.x - d.width  / 2) * cw
+      const y = (d.y - d.height / 2) * ch
+      const w = d.width  * cw
+      const h = d.height * ch
 
       ctx.strokeStyle = '#00E5FF'
       ctx.lineWidth   = 2
       ctx.strokeRect(x, y, w, h)
 
       const label = `${d.class.toUpperCase()} ${Math.round(d.confidence * 100)}%`
-      ctx.font      = 'bold 12px monospace'
+      ctx.font      = 'bold 13px monospace'
       const tw      = ctx.measureText(label).width
-      ctx.fillStyle = 'rgba(0,229,255,0.15)'
-      ctx.fillRect(x, y - 18, tw + 8, 18)
+      ctx.fillStyle = 'rgba(0,229,255,0.2)'
+      ctx.fillRect(x, y - 20, tw + 10, 20)
       ctx.fillStyle = '#00E5FF'
-      ctx.fillText(label, x + 4, y - 4)
+      ctx.fillText(label, x + 5, y - 5)
     })
   }, [detections, onDetection])
 
