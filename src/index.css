@@ -13,9 +13,11 @@ html, body, #root {
   padding: 0;
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Share Tech Mono', 'Inter', monospace;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ─── Existing animations ─────────────────────────────── */
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
@@ -33,4 +35,162 @@ html, body, #root {
 
 .animate-blink {
   animation: blink-rec 1s step-end infinite;
+}
+
+/* ─── Sonar ping (TopBar connected dot) ───────────────── */
+
+@keyframes sonar-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(3); opacity: 0; }
+}
+
+.sonar-ping-ring {
+  animation: sonar-ping 2s ease-out infinite;
+}
+
+/* ─── Bubble rise ─────────────────────────────────────── */
+
+@keyframes bubble-rise {
+  0%   { transform: translateY(0)   scale(1);   opacity: 0; }
+  10%  { opacity: 0.5; }
+  85%  { opacity: 0.35; }
+  100% { transform: translateY(-100vh) scale(1.1); opacity: 0; }
+}
+
+.ocean-bubbles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(0,229,255,0.25), rgba(0,229,255,0.05));
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  animation: bubble-rise linear infinite;
+}
+
+.bubble:nth-child(1) { width: 8px;  height: 8px;  left: 12%;  animation-duration: 14s; animation-delay: 0s; }
+.bubble:nth-child(2) { width: 14px; height: 14px; left: 28%;  animation-duration: 18s; animation-delay: 3s; }
+.bubble:nth-child(3) { width: 6px;  height: 6px;  left: 45%;  animation-duration: 12s; animation-delay: 6s; }
+.bubble:nth-child(4) { width: 18px; height: 18px; left: 62%;  animation-duration: 22s; animation-delay: 1s; }
+.bubble:nth-child(5) { width: 10px; height: 10px; left: 78%;  animation-duration: 16s; animation-delay: 8s; }
+.bubble:nth-child(6) { width: 7px;  height: 7px;  left: 90%;  animation-duration: 13s; animation-delay: 4s; }
+/* Deep background large bubbles — very low opacity */
+.bubble:nth-child(7) { width: 30px; height: 30px; left: 38%;  animation-duration: 20s; animation-delay: 5s;  opacity: 0.06; background: radial-gradient(circle at 35% 35%, rgba(0,229,255,0.12), transparent); }
+.bubble:nth-child(8) { width: 40px; height: 40px; left: 70%;  animation-duration: 25s; animation-delay: 11s; opacity: 0.06; background: radial-gradient(circle at 35% 35%, rgba(0,229,255,0.12), transparent); }
+
+/* ─── Jellyfish ───────────────────────────────────────── */
+
+@keyframes jelly-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes jelly-pulse {
+  0%, 100% { transform: scaleX(1)   scaleY(1); }
+  50%       { transform: scaleX(1.05) scaleY(0.97); }
+}
+
+@keyframes tentacle-sway {
+  0%, 100% { d: path("M0 0 Q4 12 0 24 Q-4 36 0 46"); }
+  50%       { d: path("M0 0 Q-4 12 0 24 Q4 36 0 46"); }
+}
+
+.jelly-wrap {
+  animation: jelly-float 5s ease-in-out infinite;
+}
+
+.jelly-bell {
+  transform-origin: 50% 100%;
+  animation: jelly-pulse 3s ease-in-out infinite;
+}
+
+.tentacle {
+  animation: tentacle-sway 3s ease-in-out infinite;
+}
+.tentacle:nth-child(3) { animation-delay: 0.3s; }
+.tentacle:nth-child(4) { animation-delay: 0.6s; }
+.tentacle:nth-child(5) { animation-delay: 0.9s; }
+
+/* ─── Submarine traverse ──────────────────────────────── */
+
+@keyframes sub-traverse {
+  0%   { transform: translateX(-300px); }
+  100% { transform: translateX(calc(100vw + 300px)); }
+}
+
+.submarine {
+  animation: sub-traverse 35s linear infinite;
+  animation-delay: -10s;
+}
+
+/* ─── Seaweed sway ────────────────────────────────────── */
+
+@keyframes seaweed-sway {
+  0%   { transform-origin: bottom center; transform: rotate(-4deg); }
+  100% { transform-origin: bottom center; transform: rotate(4deg); }
+}
+
+.seaweed {
+  animation: seaweed-sway 3s ease-in-out infinite alternate;
+}
+.seaweed:nth-child(2) { animation-duration: 3.7s; animation-delay: 0.4s; }
+.seaweed:nth-child(3) { animation-duration: 2.8s; animation-delay: 0.9s; }
+
+/* ─── Fish swim ───────────────────────────────────────── */
+
+@keyframes fish-swim-1 {
+  0%   { transform: translateX(-120px); }
+  100% { transform: translateX(calc(100vw + 120px)); }
+}
+
+@keyframes fish-swim-2 {
+  0%   { transform: translateX(-120px); }
+  100% { transform: translateX(calc(100vw + 120px)); }
+}
+
+@keyframes sub-swim {
+  0%   { transform: translateX(-260px); }
+  100% { transform: translateX(calc(100vw + 260px)); }
+}
+
+.sub-swim {
+  animation: sub-swim 28s linear infinite;
+  animation-delay: -14s;
+}
+
+.fish-1 {
+  animation: fish-swim-1 12s linear infinite;
+  animation-delay: -2s;
+}
+
+.fish-2 {
+  animation: fish-swim-2 18s linear infinite;
+  animation-delay: -9s;
+}
+
+/* ─── Video panel scanlines (sonar style) ─────────────── */
+
+@keyframes sonar-sweep {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+.sonar-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0, 229, 255, 0.03) 3px,
+    rgba(0, 229, 255, 0.03) 4px
+  );
+  animation: sonar-sweep 8s linear infinite;
 }

@@ -35,13 +35,17 @@ export function TopBar({ connected, username, onLogout }: Props) {
         {utc}
       </div>
 
-      {/* Right: WS status */}
+      {/* Right: WS status + user */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <span
-            className="w-2 h-2 rounded-full animate-pulse-dot"
-            style={{ backgroundColor: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}
-          />
+          <span className="relative inline-flex w-2 h-2">
+            {connected && (
+              <span className="absolute inset-0 rounded-full sonar-ping-ring"
+                style={{ backgroundColor: 'var(--color-accent-green)' }} />
+            )}
+            <span className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }} />
+          </span>
           <span className="font-mono text-xs tracking-widest"
             style={{ color: connected ? 'var(--color-accent-green)' : 'var(--color-danger)' }}>
             {connected ? 'CONNECTED' : 'OFFLINE'}
