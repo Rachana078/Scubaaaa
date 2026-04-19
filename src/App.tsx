@@ -32,7 +32,7 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
       {/* Submarine background layer */}
       <div className="fixed pointer-events-none" style={{ top: '38%', zIndex: 0 }} aria-hidden="true">
         <div className="submarine">
-          <svg width="220" height="80" viewBox="0 0 220 80" fill="none" opacity="0.12">
+          <svg width="220" height="80" viewBox="0 0 220 80" fill="none" opacity="0.12" style={{ transform: 'scaleX(-1)' }}>
             {/* Hull */}
             <ellipse cx="105" cy="52" rx="95" ry="22" fill="#00E5FF" />
             {/* Conning tower */}
