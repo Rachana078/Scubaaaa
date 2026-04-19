@@ -4,6 +4,15 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/cam-proxy': {
+        target: 'http://192.168.2.1:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cam-proxy/, ''),
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
