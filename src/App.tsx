@@ -15,7 +15,8 @@ import { Login } from './components/Login'
 function MainApp({ username, onLogout }: { username: string; onLogout: () => void }) {
   const [streamOnline, setStreamOnline] = useState(false)
   const { sendCmd, telemetry, log } = useSocket()
-  const [gamepadSpeed, setGamepadSpeed] = useState<number | null>(null)
+  const [gamepadSpeed,  setGamepadSpeed]  = useState<number | null>(null)
+  const [opticalSpeed,  setOpticalSpeed]  = useState<number | null>(null)
   const [detectionLog, setDetectionLog] = useState<LogEntry[]>([])
   const prevCountRef = useRef(0)
   useKeyboard(sendCmd)
@@ -33,7 +34,7 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
     setDetectionLog(prev => [...prev.slice(-19), entry])
   }, [])
 
-  const speed: number | null = streamOnline ? (gamepadSpeed ?? telemetry.speed) : null
+  const speed: number | null = streamOnline ? (gamepadSpeed ?? opticalSpeed ?? telemetry.speed) : null
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--color-bg-primary)' }}>
@@ -75,7 +76,7 @@ function MainApp({ username, onLogout }: { username: string; onLogout: () => voi
       <div className="flex flex-1 overflow-hidden">
         {/* Left: video */}
         <div className="flex flex-col flex-1 p-3 overflow-hidden">
-          <VideoPanel onStatusChange={setStreamOnline} onDetection={handleDetection} />
+          <VideoPanel onStatusChange={setStreamOnline} onDetection={handleDetection} onOpticalSpeed={setOpticalSpeed} />
         </div>
 
         {/* Right: compass + dpad + direction */}

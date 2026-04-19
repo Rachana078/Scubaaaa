@@ -3,29 +3,30 @@ import { useDetection } from '../hooks/useDetection'
 import type { Detection } from '../hooks/useDetection'
 
 const STREAM_URL = import.meta.env.VITE_STREAM_URL as string | undefined
+// Proxied through Vite dev server — same-origin, so canvas pixel reads work
+const PROXY_URL = STREAM_URL ? '/stream-proxy' : undefined
 
 const OPT_W = 160
 const OPT_H = 120
 
 interface Props {
-  onStatusChange?: (online: boolean) => void
-  onOpticalSpeed?: (speed: number) => void
-  onDetection?:    (detections: Detection[]) => void
+  onStatusChange?:  (online: boolean) => void
+  onOpticalSpeed?:  (speed: number) => void
+  onDetection?:     (detections: Detection[]) => void
 }
 
 export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Props) {
   const [streaming, setStreaming] = useState(false)
   const [elapsed,   setElapsed]   = useState(0)
   const [camReady,  setCamReady]  = useState(false)
-  const [optSpeed,  setOptSpeed]  = useState<number | null>(null)
 
-  const imgRef      = useRef<HTMLImageElement | null>(null)
-  const videoRef    = useRef<HTMLVideoElement | null>(null)
-  const canvasRef   = useRef<HTMLCanvasElement | null>(null)  // bounding box overlay
-  const optCanvasRef = useRef<HTMLCanvasElement>(null)        // hidden optical flow canvas
-  const startRef    = useRef<number | null>(null)
-  const prevDataRef = useRef<Uint8ClampedArray | null>(null)
-  const emaRef      = useRef(0)
+  const imgRef       = useRef<HTMLImageElement | null>(null)
+  const videoRef     = useRef<HTMLVideoElement | null>(null)
+  const canvasRef    = useRef<HTMLCanvasElement | null>(null)
+  const optCanvasRef = useRef<HTMLCanvasElement>(null)
+  const startRef     = useRef<number | null>(null)
+  const prevDataRef  = useRef<Uint8ClampedArray | null>(null)
+  const emaRef       = useRef(0)
 
   // ── Webcam fallback (when no STREAM_URL) ──────────────────────────────────
   useEffect(() => {
@@ -58,7 +59,6 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
     if (!live) {
       prevDataRef.current = null
       emaRef.current = 0
-      setOptSpeed(null)
       return
     }
 
@@ -85,15 +85,14 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
             sum += Math.sqrt(dr * dr + dg * dg + db * db)
           }
           const mad = sum / (data.length / 4)
-          emaRef.current = 0.7 * emaRef.current + 0.3 * mad
-          const scaled = parseFloat(Math.min((emaRef.current / 50) * 5, 5).toFixed(1))
-          setOptSpeed(scaled)
+          emaRef.current = 0.5 * emaRef.current + 0.5 * mad
+          const scaled = parseFloat(Math.min((emaRef.current / 20) * 5, 5).toFixed(1))
           onOpticalSpeed?.(scaled)
         }
 
         prevDataRef.current = new Uint8ClampedArray(data)
       } catch {
-        // Cross-origin tainted canvas — optical flow unavailable
+        // Canvas tainted — proxy not active or stream still cross-origin
       }
     }, 200)
 
@@ -104,7 +103,6 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
   const sourceRef = (STREAM_URL ? imgRef : videoRef) as React.RefObject<HTMLImageElement | HTMLVideoElement | null>
   const detections = useDetection(sourceRef, streaming || camReady)
 
-  // ── Draw bounding boxes on overlay canvas ─────────────────────────────────
   useEffect(() => {
     onDetection?.(detections)
     const canvas = canvasRef.current
@@ -156,12 +154,11 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
       {/* Hidden canvas for optical flow */}
       <canvas ref={optCanvasRef} className="hidden" />
 
-      {/* MJPEG stream */}
-      {STREAM_URL && (
+      {/* MJPEG stream — uses proxied URL so canvas reads are same-origin */}
+      {PROXY_URL && (
         <img
           ref={imgRef}
-          src={STREAM_URL}
-          crossOrigin="anonymous"
+          src={PROXY_URL}
           className="w-full h-full object-cover"
           onLoad={() => {
             if (!streaming) { setStreaming(true); startRef.current = Date.now() }
@@ -225,24 +222,6 @@ export function VideoPanel({ onStatusChange, onOpticalSpeed, onDetection }: Prop
           <span className="w-2 h-2 rounded-full animate-blink" style={{ background: 'var(--color-danger)' }} />
           <span className="font-mono text-xs" style={{ color: 'var(--color-danger)' }}>
             REC {fmtElapsed(elapsed)}
-          </span>
-        </div>
-      )}
-
-      {/* Bottom-right: optical speed + targets */}
-      {live && (
-        <div className="absolute bottom-2 right-2 flex items-center gap-2 px-2 py-1 rounded"
-          style={{ background: 'rgba(8,13,18,0.75)', backdropFilter: 'blur(4px)' }}>
-          {optSpeed !== null && (
-            <span className="font-mono text-xs" style={{ color: 'var(--color-accent-green)' }}>
-              OPT ~{optSpeed.toFixed(1)} mph
-            </span>
-          )}
-          <span className="font-mono text-xs tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
-            TARGETS
-          </span>
-          <span className="font-mono text-sm font-bold" style={{ color: detections.length > 0 ? 'var(--color-accent-cyan)' : 'var(--color-text-muted)' }}>
-            {detections.length}
           </span>
         </div>
       )}
