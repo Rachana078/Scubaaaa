@@ -10,6 +10,8 @@ Scubaaaa is a real-time web dashboard that lets you pilot a physical surface ves
 
 Built in ~24 hours at FullyHacks 2026 @ CSUF with an ocean theme because of course.
 
+<img width="551" height="653" alt="image" src="https://github.com/user-attachments/assets/d96198b4-d761-4ed8-8695-23cc7c501260" />
+
 ---
 
 ## Features
