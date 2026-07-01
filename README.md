@@ -112,12 +112,3 @@ Design tokens extracted from Figma and applied as CSS variables:
 | --color-warning | #FFB800 |
 | --color-danger | #FF4444 |
 
----
-
-## Team
-
-| Name | Role |
-|---|---|
-| Rachana Panduranga Naidu | Frontend, UI/UX, Design System |
-| Anjelo Go | Hardware, Backend, FastAPI, Camera Pipeline |
-| Tina Le | Frontend, WebSocket, Stream Integration |
